@@ -2,8 +2,8 @@
   "name": "chat-app",
   "version": "1.0.0",
   "main": "index.js",
- "scripts": {
-    "build": "npm install --prefix backend && npm install --prefix frontend && cd frontend && chmod +x ./node_modules/.bin/vite && npm run build --prefix frontend",
+  "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix frontend && cd frontend && chmod +x ./node_modules/.bin/vite && npm run build",
     "start": "npm run start --prefix backend"
   },
   "keywords": [],
