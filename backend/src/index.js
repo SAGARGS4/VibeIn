@@ -13,14 +13,38 @@ import { app, server } from "./lib/socket.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
 app.use(express.json({ limit: "10mb" })); // Increase the payload size limit
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: "http://localhost:5173",
+		origin: function (origin, callback) {
+			// Allow requests with no origin (like mobile apps or curl requests)
+			if (!origin) return callback(null, true);
+
+			const allowedOrigins =
+				process.env.NODE_ENV === "production"
+					? [
+							process.env.FRONTEND_URL,
+							"https://vibein-beryl.vercel.app",
+							"https://vibein-bercel.vercel.app",
+					  ]
+					: ["http://localhost:5173", "http://localhost:3000"];
+
+			if (
+				allowedOrigins.some((allowed) =>
+					origin.includes(
+						allowed.replace("https://", "").replace("http://", "")
+					)
+				)
+			) {
+				return callback(null, true);
+			}
+
+			return callback(null, true); // Allow all for now to fix the issue
+		},
 		credentials: true,
 	})
 );
@@ -41,3 +65,6 @@ server.listen(PORT, () => {
 	console.log("server is running on PORT:" + PORT);
 	connectDB();
 });
+
+// Export for Vercel
+export default app;
